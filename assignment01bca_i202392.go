@@ -41,7 +41,6 @@ func ChangeBlock(blockchain *Blockchain, index int, newTransaction string) error
 
 	blockchain.Blocks[index].Transaction = newTransaction
 
-	// Recalculate the block's hash after changing the transaction
 	block := &blockchain.Blocks[index]
 	blockData := fmt.Sprintf("%d%s%s%s", block.Nonce, block.Transaction, block.PreviousHash, block.Timestamp.String())
 	block.Hash = CalculateHash(blockData)
@@ -51,28 +50,36 @@ func ChangeBlock(blockchain *Blockchain, index int, newTransaction string) error
 
 func VerifyChain(blockchain *Blockchain) bool {
 	if len(blockchain.Blocks) == 0 {
-		return true // An empty blockchain is valid
+		return true
 	}
 
 	for i := 1; i < len(blockchain.Blocks); i++ {
+
 		currentBlock := &blockchain.Blocks[i]
+
 		prevBlock := &blockchain.Blocks[i-1]
 
 		blockData := fmt.Sprintf("%d%s%s%s", currentBlock.Nonce, currentBlock.Transaction, currentBlock.PreviousHash, currentBlock.Timestamp.String())
+
 		calculatedHash := CalculateHash(blockData)
 
 		if currentBlock.Hash != calculatedHash {
+
 			fmt.Printf("Block %d has been tampered with!\n", i)
+
 			return false
 		}
 
 		if currentBlock.PreviousHash != prevBlock.Hash {
+
 			fmt.Printf("Block %d's previous hash is incorrect!\n", i)
+
 			return false
 		}
 	}
 
 	fmt.Println("Blockchain is valid.")
+
 	return true
 }
 
@@ -80,11 +87,17 @@ func ListBlocks(blockchain *Blockchain) {
 	fmt.Println("List of Blocks")
 
 	for i, blk := range blockchain.Blocks {
-		fmt.Printf("Block %d:\n", i+1)
+
+		fmt.Printf("====Block==== %d:\n", i+1)
+
 		fmt.Println("Transaction: ", blk.Transaction)
+
 		fmt.Println("Nonce: ", blk.Nonce)
+
 		fmt.Println("Previous Hash: ", blk.PreviousHash)
+
 		fmt.Println("Hash: ", blk.Hash)
+
 		fmt.Println("Timestamp: ", blk.Timestamp)
 	}
 }
